@@ -5,6 +5,7 @@ require "ostruct"
 module GpxParser
   TRKPT = "//xmlns:trkpt"
   ELE = "//xmlns:ele"
+  M_TO_F = 3.28084
 
   def self.calculate_elevations(gpx_doc)
     if !gpx_doc.nil?
@@ -40,7 +41,7 @@ module GpxParser
   end
 
   def self.meters_to_feet(num)
-    num * 3.28084 if !num.nil?
+    num * GpxParser::M_TO_F if !num.nil?
   end
 
   def self.parse(file_path)
