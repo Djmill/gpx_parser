@@ -7,36 +7,70 @@ module GpxParser
   ELE = "//xmlns:ele"
   M_TO_F = 3.28084
 
-  def self.calculate_elevations(gpx_doc)
-    if !gpx_doc.nil?
-      min, max, change = 0, 0, nil
-      gpx_doc.xpath(GpxParser::ELE).children.each_with_index do |ele, i|
-        elevation = ele.content.to_f
-        if i == 0
-          min, max = elevation, elevation
-        elsif elevation > max
-          max = elevation
-        elsif elevation < min
-          min = elevation
+  class GpxDoc
+    attr_accessor :elevations
+    attr_accessor :trail_start
+    attr_accessor :trail_end
+    attr_accessor :gpx_doc
+    attr_accessor :options
+
+    def initialize(file_path, **options)
+      self.gpx_doc = Nokogiri::XML(File.read(file_path))
+      self.options = options
+      calculate_elevations
+      set_start_coords
+      set_end_coords
+    end
+
+    def calculate_elevations
+      if !self.gpx_doc.nil?
+        min, max, change = 0, 0, nil
+        self.gpx_doc.xpath(GpxParser::ELE).children.each_with_index do |ele, i|
+          elevation = ele.content.to_f
+          if i == 0
+            min, max = elevation, elevation
+          elsif elevation > max
+            max = elevation
+          elsif elevation < min
+            min = elevation
+          end
         end
+        change = max - min
+        elevations = {min: min, max: max, elevation_change: change}
+        set_elevations(elevations)
       end
-      change = max - min
-      {min: min, max: max, elevation_change: change}
     end
-  end
 
-  def self.find_start(gpx_doc)
-    if !gpx_doc.nil?
-      first_attr = gpx_doc.xpath(GpxParser::TRKPT)[0].attributes
-      "#{first_attr['lat'].value}, #{first_attr['lon'].value}"
+    def set_elevations(elevations)
+      self.elevations = OpenStruct.new(
+        change: OpenStruct.new(
+          feet: GpxParser.meters_to_feet(elevations[:elevation_change]),
+          meters: elevations[:elevation_change]
+        ),
+        max:  OpenStruct.new(
+          feet: GpxParser.meters_to_feet(elevations[:max]),
+          meters: elevations[:max]
+        ),
+        min:  OpenStruct.new(
+          feet: GpxParser.meters_to_feet(elevations[:min]),
+          meters: elevations[:min]
+        )
+      )
     end
-  end
 
-  def self.find_end(gpx_doc)
-    if !gpx_doc.nil?
-      trkpts = gpx_doc.xpath(GpxParser::TRKPT)
-      last_attr = trkpts[(trkpts.length - 1)].attributes
-      "#{last_attr['lat'].value}, #{last_attr['lon'].value}"
+    def set_start_coords
+      if !self.gpx_doc.nil?
+        first_attr = self.gpx_doc.xpath(GpxParser::TRKPT)[0].attributes
+        self.trail_start = "#{first_attr['lat'].value}, #{first_attr['lon'].value}"
+      end
+    end
+
+    def set_end_coords
+      if !self.gpx_doc.nil?
+        trkpts = self.gpx_doc.xpath(GpxParser::TRKPT)
+        last_attr = trkpts[(trkpts.length - 1)].attributes
+        self.trail_end = "#{last_attr['lat'].value}, #{last_attr['lon'].value}"
+      end
     end
   end
 
@@ -46,21 +80,7 @@ module GpxParser
 
   def self.parse(file_path)
     if !file_path.nil? && file_path.include?(".gpx")
-      trip = {}
-      gpx_doc = Nokogiri::XML(File.read(file_path))
-      trip[:elevations] = calculate_elevations(gpx_doc)
-      OpenStruct.new(
-        elevations: OpenStruct.new(
-                      min_meters: trip[:elevations][:min],
-                      max_meters: trip[:elevations][:max],
-                      min_feet: meters_to_feet(trip[:elevations][:min]),
-                      max_feet: meters_to_feet(trip[:elevations][:max]),
-                      change_meters: trip[:elevations][:elevation_change],
-                      change_feet: meters_to_feet(trip[:elevations][:elevation_change])
-                    ),
-        trip_start: find_start(gpx_doc),
-        trip_end: find_end(gpx_doc)
-      )
+      gpx_doc = GpxParser::GpxDoc.new(file_path)
     end
   end
 end

@@ -37,27 +37,27 @@ gpx = GpxParser.parse('gpx_test_file.gpx')
 
 Now you can find out some useful info about the trip:
 #### Minimum Elevation (in meters)
-gpx.elevations.min_meters
+gpx.elevations.min.meters
   => 331.454
 
 #### Maximum Elevation (in meters)
-gpx.elevations.max_meters
+gpx.elevations.max.meters
   => 378.221
 
 #### Minimum Elevation (in feet)
-gpx.elevations.min_feet
+gpx.elevations.min.feet
   => 1087.44754136
 
 #### Maximum Elevation (in feet)
-gpx.elevations.max_feet
+gpx.elevations.max.feet
   => 1240.8825856400001
 
 #### Elevation Change (in meters)
-gpx.elevations.change_meters
+gpx.elevations.change.meters
   => 46.766999999999996
 
 #### Elevation Change (in feet)
-gpx.elevations.change_feet
+gpx.elevations.change.feet
   => 153.43504428
 
 #### Trip Start Coordinates
