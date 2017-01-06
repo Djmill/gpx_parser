@@ -1,6 +1,6 @@
 require 'gpx_parser'
 
-gpx = GpxParser.GPX('gpx_test_file.gpx')
+gpx = GpxParser.parse('gpx_test_file.gpx')
 puts "*** Congrats, you just parsed your first .gpx file!"
 puts "   Let's find out more about the trip..."
 puts "   Trip Elevation:"
