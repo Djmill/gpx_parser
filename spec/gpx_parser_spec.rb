@@ -11,12 +11,12 @@ describe GpxParser do
       it 'should return a valid OpenStruct object with trip data when provided a valid file' do
         gpx = GpxParser.parse(@file_path)
         expect(gpx).to be_an(OpenStruct)
-        expect(gpx.elevations.min_meters).to eq(331.454)
-        expect(gpx.elevations.min_feet).to eq(1087.44754136)
-        expect(gpx.elevations.max_meters).to eq(378.221)
-        expect(gpx.elevations.max_feet).to eq(1240.8825856400001)
-        expect(gpx.elevations.change_meters).to eq(46.766999999999996)
-        expect(gpx.elevations.change_feet).to eq(153.43504428)
+        expect(gpx.elevations.min.meters).to eq(331.454)
+        expect(gpx.elevations.min.feet).to eq(1087.44754136)
+        expect(gpx.elevations.max.meters).to eq(378.221)
+        expect(gpx.elevations.max.feet).to eq(1240.8825856400001)
+        expect(gpx.elevations.change.meters).to eq(46.766999999999996)
+        expect(gpx.elevations.change.feet).to eq(153.43504428)
         expect(gpx.trip_start).to eq("40.567940, -79.908095")
         expect(gpx.trip_end).to eq("40.567963, -79.908251")
       end
