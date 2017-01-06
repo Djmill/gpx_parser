@@ -43,7 +43,7 @@ module GpxParser
     num * 3.28084 if !num.nil?
   end
 
-  def self.GPX(file_path)
+  def self.parse(file_path)
     if !file_path.nil? && file_path.include?(".gpx")
       trip = {}
       gpx_doc = Nokogiri::XML(File.read(file_path))

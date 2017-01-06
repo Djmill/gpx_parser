@@ -9,7 +9,7 @@ describe GpxParser do
 
     describe 'GPX' do
       it 'should return a valid OpenStruct object with trip data when provided a valid file' do
-        gpx = GpxParser.GPX(@file_path)
+        gpx = GpxParser.parse(@file_path)
         expect(gpx).to be_an(OpenStruct)
         expect(gpx.elevations.min_meters).to eq(331.454)
         expect(gpx.elevations.min_feet).to eq(1087.44754136)
@@ -22,12 +22,12 @@ describe GpxParser do
       end
 
       it 'should return nile when the file is not a .gpx file' do
-        gpx = GpxParser.GPX(File.dirname(__FILE__) + "/../example.rb")
+        gpx = GpxParser.parse(File.dirname(__FILE__) + "/../example.rb")
         expect(gpx).to be_nil
       end
 
       it 'should nil if the file is not present' do
-        gpx = GpxParser.GPX(nil)
+        gpx = GpxParser.parse(nil)
         expect(gpx).to be_nil
       end
     end

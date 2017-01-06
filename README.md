@@ -32,7 +32,7 @@ require 'gpx_parser'
 Simply pass a valid .gpx file path to the GpxParser::GPX method:
 
 ```ruby
-gpx = GpxParser.GPX('gpx_test_file.gpx')
+gpx = GpxParser.parse('gpx_test_file.gpx')
 ```
 
 Now you can find out some useful info about the trip:
